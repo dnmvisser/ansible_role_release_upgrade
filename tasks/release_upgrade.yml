@@ -32,9 +32,11 @@
 
 - name: Reboot if needed
   reboot:
+    search_paths: /usr/local/sbin
   when: reboot.stat.exists
 
-
+# FIXME make this more robust
+# Perhaps use templates for sources.list?
 - name: "Ensure sources.list uses {{ next_release_name }} repo"
   replace:
     path: /etc/apt/sources.list
@@ -67,4 +69,5 @@
 
 - name: Reboot if needed
   reboot:
+    search_paths: /usr/local/sbin
   when: reboot.stat.exists

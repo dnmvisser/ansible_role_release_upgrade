@@ -36,7 +36,7 @@
 # this will generate errors like
 # Failed to set wall message, ignoring: Interactive authentication required.
 # We use a helper shutdown command that works on all releases
-- name: Ensure helper reboot script available
+- name: Ensure helper reboot script is available
   copy:
     dest: /usr/local/sbin/shutdown
     content: |

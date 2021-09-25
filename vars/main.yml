@@ -8,10 +8,3 @@ releases:
   11: bullseye
   12: bookworm
   13: trixie
-
-# Used as module defaults
-reboot_defaults:
-  search_paths:
-    - /usr/local/sbin
-    - /usr/sbin
-    - /sbin
