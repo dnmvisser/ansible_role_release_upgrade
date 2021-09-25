@@ -22,17 +22,25 @@ This role was created to automate the upgrade of VMs on a platform that only
 offered instantiating Debian 9 VMs.
 It has been tested on clean VMs only.
 
-# Example Playbook
+# Example playbooks
+
+## Example 1
+
+Upgrade Debian 9 to Debian 11. This includes 2 release upgrades:
+- 9 to 10
+- 10 to 11
 
 ```yaml
-# Run two upgrades in sequence, to become Debian 11
 - hosts: stretch
   roles:
     - role: ansible_role_release_upgrade
 ```
 
+## Example 2
+
+Upgrade Debian 8 to Debian 11. This means 3 release upgrades:
+
 ```yaml
-# Upgrade Debian 8 to Debian 11, which means three consequetive upgrades:
 # - 8 to 9
 # - 9 to 10
 # - 10 to 11
@@ -42,9 +50,13 @@ It has been tested on clean VMs only.
     - role: ansible_role_release_upgrade
 ```
 
+## Example 3
+
+Upgrade Debian 9 to Debian 10. This is just one release upgrade, but because it
+is *not* to the default (i.e. latest stable) release, the version has to be
+provded:
 
 ```yaml
-# Upgrade Debian 9 to Debian 10
 - hosts: stretch
   roles:
     - role: ansible_role_release_upgrade
