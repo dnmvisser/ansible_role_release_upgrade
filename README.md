@@ -32,7 +32,11 @@ It has been tested on clean VMs only.
 ```
 
 ```yaml
-# Upgrade Debian 8 to Debian 11, which means three consequetive upgrades (8 to 9, 9 to 10, 10 to 11)
+# Upgrade Debian 8 to Debian 11, which means three consequetive upgrades:
+# - 8 to 9
+# - 9 to 10
+# - 10 to 11
+#
 - hosts: jessie
   roles:
     - role: ansible_role_release_upgrade
