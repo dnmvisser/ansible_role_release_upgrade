@@ -1,2 +1,17 @@
 ---
 # vars file for ansible_role_release_upgrade
+releases:
+  7: wheezy
+  8: jessie
+  9: stretch
+  10: buster
+  11: bullseye
+  12: bookworm
+  13: trixie
+
+# Used as module defaults
+reboot_defaults:
+  search_paths:
+    - /usr/local/sbin
+    - /usr/sbin
+    - /sbin

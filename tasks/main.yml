@@ -1,2 +1,72 @@
 ---
-# tasks file for ansible_role_release_upgrade
+- setup:
+
+- set_fact:
+    current_release_version: "{{ ansible_distribution_major_version }}"
+    current_release_name: "{{ releases[ansible_distribution_major_version|int] }}"
+    next_release_version: "{{ ansible_distribution_major_version|int+1 }}"
+    next_release_name: "{{ releases[ansible_distribution_major_version|int+1] }}"
+    required_release_name: "{{ releases[required_release_version|int] }}"
+
+- name: Generate lis of versions to upgrade to
+  set_fact:
+    upgrades: "{{ range(next_release_version|int, required_release_version|int+1) }}"
+
+- debug:
+    msg: |
+      {% if upgrades|count > 0 %}
+      Performing {{ upgrades|count }} upgrades:
+      {% for i in upgrades %}
+        Debian {{ releases[i|int-1] }} => Debian {{ releases[i|int] }}
+      {% endfor %}
+      {% elif required_release_version|int < current_release_version|int %}
+      Target system is Debian {{ current_release_version }} ({{ current_release_name }}),  which is newer
+      than the required version {{ required_release_version }} ({{ required_release_name }}).
+      Nothing to do!
+      {% else %}
+      Target is already Debian {{ current_release_version }} ({{ current_release_name }})
+      Nothing to do!
+      {% endif %}
+
+- name: Ending play if target is already at required release
+  meta: end_play
+  when: upgrades|count == 0
+
+# 'shutdown -r' does not work on Debian 8
+# this will generate errors like
+# Failed to set wall message, ignoring: Interactive authentication required.
+# We use a helper shutdown command that works on all releases
+- name: Ensure helper reboot script available
+  copy:
+    dest: /usr/local/sbin/shutdown
+    content: |
+      #!/bin/sh
+      systemctl reboot
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Include release upgrade tasks
+  include_tasks: release_upgrade.yml
+  loop: "{{ upgrades }}"
+  loop_control:
+    loop_var: t
+    label: "Upgrade to Debian {{ t }} ({{ releases[t|int] }})"
+  when: ansible_distribution_major_version|int < required_release_version|int
+
+- name: Remove unused packages
+  apt:
+    autoremove: yes
+#  register: cu1
+#- debug: var=cu1
+
+- name: Clean up package cache
+  apt:
+    autoclean: yes
+#  register: cu2
+#- debug: var=cu2
+
+- name: Ensure helper reboot scripts is removed again
+  file:
+    path: /usr/local/sbin/shutdown
+    state: absent

@@ -1,2 +1,5 @@
 ---
 # defaults file for ansible_role_release_upgrade
+
+# Which major version to upgrade to
+required_release_version: 11
