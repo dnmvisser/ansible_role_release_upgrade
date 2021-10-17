@@ -1,6 +1,29 @@
 ---
+
+# Workaround for older versions
+- name: Find out if we have python2
+  raw: python2 --version
+  register: p2
+  failed_when: false
+  changed_when: false
+- debug: var=p2
+
+- name: Find out if we have python3
+  raw: python3 --version
+  register: p3
+  failed_when: false
+  changed_when: false
+- debug: var=p3
+
+- name: Ensure python-minimal is available
+  raw: apt -y update && apt install -y python-minimal
+  when:
+    - p2.rc != 0
+    - p3.rc != 0
+
 - setup:
 
+#- meta: end_play
 - set_fact:
     current_release_version: "{{ ansible_distribution_major_version }}"
     current_release_name: "{{ releases[ansible_distribution_major_version|int] }}"
